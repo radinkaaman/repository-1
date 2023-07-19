@@ -1,0 +1,32 @@
+on mouseup
+global gConnectionID
+
+put "127.0.0.1" into tDatabaseAddress
+put "radinkaaman" into tDatabaseName
+put "radinkaaman" into tDatabaseUser
+put "password" into tDatabasePassword
+
+put revOpenDatabase("MySQL", tDatabaseAddress, tDatabaseName, tDatabaseUser, tDatabaseUser, tDatabasePassword) into tResult
+
+if tResult is a number then
+put tResult into gConnectionID
+answer info "Connected to the database." & cr & "Connection ID = " & gConnectionID
+
+put "SELECT * FROM owner" into tSQL
+
+put revDataFromQuery(tab, cr, tResult, tSQL) into tData
+
+repeat with loop = 1 to the number of lines in tData
+put line loop of tData into temp
+split temp by tab
+put temp[1] into user[loop][uid]
+put temp[2] into user[loop][fname]
+put temp[3] into user[loop][sname]
+
+put user[loop][uid] & tab & user[loop][fname] & tab & tab & user[loop][sname] into line loop of field "Data"
+end repeaat
+else
+put empty into gConnectionID
+answer error "Unable to connect to the database:" & cr & tResult
+end if
+end mouseup
